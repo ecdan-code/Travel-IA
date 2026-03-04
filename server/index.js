@@ -400,7 +400,7 @@ app.post('/api/chat', async (req, res) => {
         console.log(`[CHAT] Request received: "${logData.msg}..."`);
     } catch (e) { /* ignore EPIPE */ }
 
-    fs.appendFileSync('chat_errors.log', `[${new Date().toISOString()}] Incoming Request: ${JSON.stringify(logData)}\n`);
+    try { fs.appendFileSync('chat_errors.log', `[${new Date().toISOString()}] Incoming Request: ${JSON.stringify(logData)}\n`); } catch (e) { }
 
     const { message, conversationHistory, tripContext, currentLocation, clientDate, expenseContext } = req.body;
 
@@ -793,7 +793,7 @@ Consulta itinerario/gastos/preferencias con herramientas cuando sea necesario.
         console.log('[CHAT] Response sent successfully');
     } catch (error) {
         console.error("Chat Error Details:", error);
-        fs.appendFileSync('chat_errors.log', `[${new Date().toISOString()}] Error: ${error.message}\nStack: ${error.stack}\n`);
+        try { fs.appendFileSync('chat_errors.log', `[${new Date().toISOString()}] Error: ${error.message}\nStack: ${error.stack}\n`); } catch (e) { }
 
         let errorMessage = "Lo siento, tuve un problema al procesar tu mensaje.";
         if (error.message?.includes('404')) {
