@@ -1,0 +1,15 @@
+{
+    "name": "travel-ia",
+    "version": "1.0.0",
+    "description": "Travel IA - Asistente de Viajes Inteligente",
+    "scripts": {
+        "install:client": "cd client && npm install",
+        "install:server": "cd server && npm install",
+        "install:all": "npm run install:server && npm run install:client",
+        "build:client": "cd client && npm run build",
+        "build": "npm run install:all && npm run build:client",
+        "start": "cd server && node index.js",
+        "dev:server": "cd server && npm run dev",
+        "dev:client": "cd client && npm run dev"
+    }
+}

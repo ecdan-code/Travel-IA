@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Database files
+*.db
+
+# Logs
+*.log
+*.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+.gemini/
+
+# Build output
+client/dist/
+
+# Batch scripts (local only)
+*.bat
