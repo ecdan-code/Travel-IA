@@ -58,7 +58,9 @@ export const TripContextProvider = ({ children }) => {
             }
 
             // Si no hay localStorage pero tenemos usuario, intentar cargar desde Supabase
-            if (!savedTrip && user && session?.access_token && !syncedFromSupabase) {
+            // Also check that the user hasn't explicitly archived their trip
+            const tripArchived = localStorage.getItem('travelIA_noTrip');
+            if (!savedTrip && !tripArchived && user && session?.access_token && !syncedFromSupabase) {
                 console.log('[TripContext] No hay trip local, cargando desde Supabase...');
                 try {
                     const authClient = supabase;
@@ -138,6 +140,8 @@ export const TripContextProvider = ({ children }) => {
         };
         setTripContext(newTrip);
         setTripState(TRIP_STATES.PRE_TRIP);
+        // Clear the noTrip flag since we have a new trip now
+        localStorage.removeItem('travelIA_noTrip');
 
         // Auto-guardar presupuesto en expenseStorage si se proporcionó
         if (tripData.totalBudget) {
@@ -156,21 +160,23 @@ export const TripContextProvider = ({ children }) => {
             setPastTrips(prev => [archived, ...prev]);
 
             // Update trip status in Supabase to prevent reloading on re-login
-            if (tripContext.id) {
-                try {
-                    const { error } = await supabase
-                        .from('trips')
-                        .update({ status: 'archived' })
-                        .eq('id', tripContext.id);
-                    if (error) {
-                        console.error('[TripContext] Error archiving in Supabase:', error);
-                    } else {
-                        console.log('[TripContext] Trip archived in Supabase');
-                    }
-                } catch (err) {
-                    console.error('[TripContext] Error updating Supabase:', err);
+            // Archive ALL active trips for this user, not just the current one
+            try {
+                const { error } = await supabase
+                    .from('trips')
+                    .update({ status: 'archived' })
+                    .eq('status', 'active');
+                if (error) {
+                    console.error('[TripContext] Error archiving in Supabase:', error);
+                } else {
+                    console.log('[TripContext] All active trips archived in Supabase');
                 }
+            } catch (err) {
+                console.error('[TripContext] Error updating Supabase:', err);
             }
+
+            // Set flag to prevent Supabase from re-loading archived trips
+            localStorage.setItem('travelIA_noTrip', 'true');
 
             // Note: We don't remove other localStorage items (itineraries/expenses) 
             // because they are keyed by tripId. Only clear the active trip.
@@ -196,8 +202,20 @@ export const TripContextProvider = ({ children }) => {
         setTripState(newState);
     };
 
-    const clearAllData = () => {
+    const clearAllData = async () => {
+        // Archive all active trips in Supabase first
+        try {
+            await supabase
+                .from('trips')
+                .update({ status: 'archived' })
+                .eq('status', 'active');
+            console.log('[TripContext] All trips archived in Supabase');
+        } catch (err) {
+            console.error('[TripContext] Error archiving in Supabase:', err);
+        }
+
         localStorage.clear();
+        localStorage.setItem('travelIA_noTrip', 'true');
         setTripContext(null);
         setPastTrips([]);
         setTripState(TRIP_STATES.NO_TRIP);
