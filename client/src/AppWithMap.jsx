@@ -35,7 +35,7 @@ function AppWithMap() {
     const markersRef = useRef([]);
     const lastFetchRef = useRef({ coords: null, time: 0 });
 
-    const [coords, setCoords] = useState({ lat: 35.6984, lng: 139.7731 });
+    const [coords, setCoords] = useState({ lat: 20.6765, lng: -103.3378 });
     const [locationName, setLocationName] = useState("Localizando...");
     const [showWelcome, setShowWelcome] = useState(false);
     const [showItinerary, setShowItinerary] = useState(false);
