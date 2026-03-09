@@ -26,7 +26,7 @@ const ActivityEditor = ({ activity, dayIndex, onSave, onClose }) => {
         { value: 'naturaleza', label: '🌿 Naturaleza', color: '#10b981' },
         { value: 'entretenimiento', label: '🎭 Entretenimiento', color: '#ec4899' },
         { value: 'logística', label: '✈️ Logística', color: '#3b82f6' },
-        { value: 'transporte', label: '🚗 Transporte', color: '#6366f1' }
+        { value: 'transporte', label: '🚗 Transporte', color: '#ec4899' }
     ];
 
     const handleChange = (field, value) => {

@@ -54,7 +54,7 @@ const ItineraryViewer = ({ tripContext, itinerary, onUpdate }) => {
             naturaleza: '#10b981',
             entretenimiento: '#ec4899',
             logística: '#3b82f6',
-            transporte: '#6366f1'
+            transporte: '#ec4899'
         };
         return colors[category] || '#6b7280';
     };
