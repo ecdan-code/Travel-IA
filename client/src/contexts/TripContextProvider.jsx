@@ -150,7 +150,7 @@ export const TripContextProvider = ({ children }) => {
         }
     };
 
-    const archiveCurrentTrip = async () => {
+    const archiveCurrentTrip = () => {
         if (tripContext) {
             const archived = {
                 ...tripContext,
@@ -159,30 +159,25 @@ export const TripContextProvider = ({ children }) => {
             };
             setPastTrips(prev => [archived, ...prev]);
 
-            // Update trip status in Supabase to prevent reloading on re-login
-            // Archive ALL active trips for this user, not just the current one
-            try {
-                const { error } = await supabase
-                    .from('trips')
-                    .update({ status: 'archived' })
-                    .eq('status', 'active');
-                if (error) {
-                    console.error('[TripContext] Error archiving in Supabase:', error);
-                } else {
-                    console.log('[TripContext] All active trips archived in Supabase');
-                }
-            } catch (err) {
-                console.error('[TripContext] Error updating Supabase:', err);
-            }
-
-            // Set flag to prevent Supabase from re-loading archived trips
+            // LOCAL CLEANUP FIRST (always works)
             localStorage.setItem('travelIA_noTrip', 'true');
-
-            // Note: We don't remove other localStorage items (itineraries/expenses) 
-            // because they are keyed by tripId. Only clear the active trip.
             localStorage.removeItem('travelIA_trip');
             setTripContext(null);
             setTripState(TRIP_STATES.NO_TRIP);
+
+            // THEN try Supabase update in background (non-blocking)
+            supabase
+                .from('trips')
+                .update({ status: 'archived' })
+                .eq('status', 'active')
+                .then(({ error }) => {
+                    if (error) {
+                        console.error('[TripContext] Error archiving in Supabase:', error);
+                    } else {
+                        console.log('[TripContext] All active trips archived in Supabase');
+                    }
+                })
+                .catch(err => console.error('[TripContext] Error updating Supabase:', err));
         }
     };
 
