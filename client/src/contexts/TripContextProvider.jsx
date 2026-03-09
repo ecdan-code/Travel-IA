@@ -146,7 +146,7 @@ export const TripContextProvider = ({ children }) => {
         }
     };
 
-    const archiveCurrentTrip = () => {
+    const archiveCurrentTrip = async () => {
         if (tripContext) {
             const archived = {
                 ...tripContext,
@@ -154,6 +154,23 @@ export const TripContextProvider = ({ children }) => {
                 finalState: tripState
             };
             setPastTrips(prev => [archived, ...prev]);
+
+            // Update trip status in Supabase to prevent reloading on re-login
+            if (tripContext.id) {
+                try {
+                    const { error } = await supabase
+                        .from('trips')
+                        .update({ status: 'archived' })
+                        .eq('id', tripContext.id);
+                    if (error) {
+                        console.error('[TripContext] Error archiving in Supabase:', error);
+                    } else {
+                        console.log('[TripContext] Trip archived in Supabase');
+                    }
+                } catch (err) {
+                    console.error('[TripContext] Error updating Supabase:', err);
+                }
+            }
 
             // Note: We don't remove other localStorage items (itineraries/expenses) 
             // because they are keyed by tripId. Only clear the active trip.
