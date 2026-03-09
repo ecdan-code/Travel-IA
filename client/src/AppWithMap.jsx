@@ -591,8 +591,8 @@ function AppWithMap() {
                                     setIsManualLocation(false);
                                     // Feedback visual
                                     const btn = e.currentTarget;
-                                    btn.style.backgroundColor = '#be185d';
-                                    setTimeout(() => btn.style.backgroundColor = '#ec4899', 200);
+                                    btn.style.backgroundColor = '#4f46e5';
+                                    setTimeout(() => btn.style.backgroundColor = '#6366f1', 200);
                                 }}
                             >
                                 ✓

@@ -51,7 +51,7 @@ const GoogleMap = ({
             directionsRendererRef.current = new google.maps.DirectionsRenderer({
                 suppressMarkers: false,
                 polylineOptions: {
-                    strokeColor: '#ec4899',
+                    strokeColor: '#6366f1',
                     strokeWeight: 5,
                     strokeOpacity: 0.8
                 }

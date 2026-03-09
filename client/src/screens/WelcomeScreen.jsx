@@ -98,7 +98,7 @@ const WelcomeScreen = ({ onComplete }) => {
 
                 {/* Header */}
                 <div className="welcome-header">
-                    <Plane size={40} color="#ec4899" />
+                    <Plane size={40} color="#6366f1" />
                     <h1>¡Bienvenido a Travel IA!</h1>
                     <p>Configura tu viaje para recibir asistencia personalizada</p>
                 </div>
